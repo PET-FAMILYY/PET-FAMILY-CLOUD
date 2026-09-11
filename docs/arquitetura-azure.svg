@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1040" viewBox="0 0 1600 1040" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#323130"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0078D4"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="1040" fill="#F7F9FB"/>
+
+  <text x="40" y="46" font-size="26" font-weight="700" fill="#1B1B1B">Pet Family API — Arquitetura de Implantação na Azure</text>
+  <text x="40" y="72" font-size="15" fill="#4B4B4B">Opção 2: Azure App Service (sem container) + Azure Database for PostgreSQL Flexible Server (PaaS)</text>
+
+  <!-- ============ Clientes / Internet ============ -->
+  <text x="40" y="120" font-size="14" font-weight="700" fill="#4B4B4B">CLIENTES (INTERNET)</text>
+  <rect x="40" y="132" width="1520" height="110" rx="10" fill="#FFFFFF" stroke="#C8C8C8" stroke-width="1.5" stroke-dasharray="6,4"/>
+
+  <!-- Mobile app -->
+  <g>
+    <rect x="70" y="155" width="230" height="66" rx="8" fill="#EDF6FF" stroke="#0078D4" stroke-width="1.5"/>
+    <circle cx="98" cy="188" r="14" fill="#0078D4"/>
+    <rect x="92" y="178" width="12" height="20" rx="2" fill="#FFFFFF"/>
+    <text x="120" y="182" font-size="13.5" font-weight="700" fill="#1B1B1B">App Mobile (Expo)</text>
+    <text x="120" y="200" font-size="12" fill="#4B4B4B">Tutor / Veterinário</text>
+  </g>
+
+  <!-- Postman/Swagger -->
+  <g>
+    <rect x="330" y="155" width="230" height="66" rx="8" fill="#EDF6FF" stroke="#0078D4" stroke-width="1.5"/>
+    <circle cx="358" cy="188" r="14" fill="#FF6C37"/>
+    <text x="358" y="193" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">P</text>
+    <text x="380" y="182" font-size="13.5" font-weight="700" fill="#1B1B1B">Postman / Swagger UI</text>
+    <text x="380" y="200" font-size="12" fill="#4B4B4B">Demonstração dos CRUDs</text>
+  </g>
+
+  <!-- Dev workstation -->
+  <g>
+    <rect x="1160" y="155" width="370" height="66" rx="8" fill="#F4F4F4" stroke="#8A8886" stroke-width="1.5"/>
+    <rect x="1182" y="172" width="26" height="20" rx="3" fill="#5C5C5C"/>
+    <text x="1195" y="186" font-size="11" fill="#FFFFFF" text-anchor="middle">&gt;_</text>
+    <text x="1220" y="182" font-size="13.5" font-weight="700" fill="#1B1B1B">Estação do desenvolvedor</text>
+    <text x="1220" y="200" font-size="12" fill="#4B4B4B">git + Maven + Azure CLI + psql</text>
+  </g>
+
+  <!-- Arrows: clients -> App Service (HTTPS) -->
+  <line x1="185" y1="221" x2="185" y2="290" stroke="#0078D4" stroke-width="2"/>
+  <line x1="445" y1="221" x2="445" y2="260" stroke="#0078D4" stroke-width="2"/>
+  <line x1="445" y1="260" x2="700" y2="260" stroke="#0078D4" stroke-width="2"/>
+  <line x1="700" y1="260" x2="700" y2="290" stroke="#0078D4" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <line x1="185" y1="290" x2="185" y2="290" stroke="#0078D4" stroke-width="2"/>
+
+  <!-- ============ GitHub + Azure CLI (deploy pipeline, fora da Azure) ============ -->
+  <g>
+    <rect x="1160" y="260" width="175" height="66" rx="8" fill="#F4F4F4" stroke="#24292E" stroke-width="1.5"/>
+    <circle cx="1186" cy="293" r="14" fill="#24292E"/>
+    <text x="1186" y="298" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">GH</text>
+    <text x="1210" y="288" font-size="13" font-weight="700" fill="#1B1B1B">GitHub</text>
+    <text x="1210" y="305" font-size="11.5" fill="#4B4B4B">Repositório da entrega</text>
+  </g>
+  <g>
+    <rect x="1355" y="260" width="175" height="66" rx="8" fill="#EDF6FF" stroke="#0078D4" stroke-width="1.5"/>
+    <rect x="1377" y="277" width="26" height="20" rx="3" fill="#0078D4"/>
+    <text x="1390" y="291" font-size="11" fill="#FFFFFF" text-anchor="middle">az</text>
+    <text x="1412" y="288" font-size="13" font-weight="700" fill="#1B1B1B">Azure CLI</text>
+    <text x="1412" y="305" font-size="11.5" fill="#4B4B4B">azure/*.sh (scripts)</text>
+  </g>
+
+  <line x1="1247" y1="221" x2="1247" y2="260" stroke="#5C5C5C" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="1252" y="245" font-size="11" fill="#5C5C5C">git push / clone</text>
+
+  <line x1="1345" y1="293" x2="1355" y2="293" stroke="#5C5C5C" stroke-width="2"/>
+  <line x1="1247" y1="221" x2="1247" y2="221" stroke="none"/>
+
+  <!-- GitHub -> Azure CLI (fonte do JAR / código clonado) -->
+  <line x1="1335" y1="293" x2="1355" y2="293" stroke="#5C5C5C" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ Boundary: Microsoft Azure ============ -->
+  <rect x="40" y="360" width="1520" height="620" rx="14" fill="#FFFFFF" stroke="#0078D4" stroke-width="2" stroke-dasharray="10,6"/>
+  <text x="60" y="390" font-size="16" font-weight="700" fill="#0078D4">MICROSOFT AZURE — assinatura do grupo (2tdspg-2026)</text>
+
+  <!-- Resource Group boundary -->
+  <rect x="80" y="410" width="1440" height="540" rx="12" fill="#FAFCFF" stroke="#5C5C5C" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="100" y="438" font-size="14" font-weight="700" fill="#323130">RESOURCE GROUP — rg-petfamily-devops (região: Brazil South)</text>
+
+  <!-- App Service Plan container -->
+  <rect x="130" y="470" width="560" height="260" rx="10" fill="#EDF6FF" stroke="#0078D4" stroke-width="1.5"/>
+  <text x="150" y="496" font-size="12.5" font-weight="700" fill="#0078D4">APP SERVICE PLAN (Linux · B1)</text>
+
+  <!-- App Service box -->
+  <g>
+    <rect x="160" y="516" width="500" height="190" rx="10" fill="#FFFFFF" stroke="#0078D4" stroke-width="2"/>
+    <rect x="182" y="536" width="34" height="34" rx="6" fill="#0078D4"/>
+    <path d="M192,545 h14 M192,553 h14 M192,561 h10" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+    <text x="228" y="550" font-size="15" font-weight="700" fill="#1B1B1B">Azure App Service</text>
+    <text x="228" y="568" font-size="12" fill="#4B4B4B">Runtime: JAVA 17 (Linux) — sem container</text>
+
+    <rect x="182" y="590" width="456" height="100" rx="8" fill="#F3F9FF" stroke="#B7DBFF" stroke-width="1"/>
+    <text x="200" y="612" font-size="13" font-weight="700" fill="#1B1B1B">Pet Family API — Spring Boot 3.2.5</text>
+    <text x="200" y="632" font-size="11.5" fill="#4B4B4B">Controllers → Services → Repositories (Spring Data JPA)</text>
+    <text x="200" y="649" font-size="11.5" fill="#4B4B4B">Spring Security + JWT · Flyway (V1–V3) · Cache Caffeine</text>
+    <text x="200" y="666" font-size="11.5" fill="#4B4B4B">Perfil ativo: SPRING_PROFILES_ACTIVE=prod</text>
+    <text x="200" y="683" font-size="11.5" fill="#4B4B4B">Porta: ${PORT:8080} · /actuator/health (health check)</text>
+  </g>
+
+  <!-- PostgreSQL box -->
+  <g>
+    <rect x="760" y="516" width="440" height="190" rx="10" fill="#FFFFFF" stroke="#0078D4" stroke-width="2"/>
+    <ellipse cx="800" cy="548" rx="18" ry="8" fill="#0078D4"/>
+    <path d="M782,548 v22 a18,8 0 0 0 36,0 v-22" fill="#EDF6FF" stroke="#0078D4" stroke-width="2"/>
+    <ellipse cx="800" cy="548" rx="18" ry="8" fill="none" stroke="#0078D4" stroke-width="2"/>
+    <text x="828" y="550" font-size="15" font-weight="700" fill="#1B1B1B">Azure Database for</text>
+    <text x="828" y="568" font-size="15" font-weight="700" fill="#1B1B1B">PostgreSQL Flexible Server</text>
+
+    <rect x="782" y="592" width="396" height="98" rx="8" fill="#F3F9FF" stroke="#B7DBFF" stroke-width="1"/>
+    <text x="800" y="614" font-size="12.5" font-weight="700" fill="#1B1B1B">PaaS — sem container, gerenciado pelo Azure</text>
+    <text x="800" y="634" font-size="11.5" fill="#4B4B4B">Banco: petfamily · SKU Burstable (B1ms)</text>
+    <text x="800" y="651" font-size="11.5" fill="#4B4B4B">Tabelas: tutores, usuarios, pets, consultas,</text>
+    <text x="800" y="666" font-size="11.5" fill="#4B4B4B">consulta_slots, lembretes, interacoes_ia</text>
+    <text x="800" y="683" font-size="11.5" fill="#4B4B4B">SSL obrigatório (sslmode=require)</text>
+  </g>
+
+  <!-- Arrow App Service -> Postgres -->
+  <line x1="662" y1="605" x2="758" y2="605" stroke="#0078D4" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+  <text x="668" y="595" font-size="11.5" font-weight="700" fill="#0078D4">JDBC + SSL</text>
+
+  <!-- Firewall note -->
+  <rect x="760" y="726" width="440" height="60" rx="8" fill="#FFF8E1" stroke="#F2C94C" stroke-width="1.2"/>
+  <text x="778" y="748" font-size="11.5" font-weight="700" fill="#7A5B00">Firewall do PostgreSQL Flexible Server</text>
+  <text x="778" y="766" font-size="11" fill="#7A5B00">Allow Azure Services (App Service) + IP do cliente (psql), via az CLI</text>
+
+  <!-- Flyway note under App Service -->
+  <rect x="160" y="726" width="500" height="60" rx="8" fill="#EAF7EE" stroke="#8FCB9B" stroke-width="1.2"/>
+  <text x="178" y="748" font-size="11.5" font-weight="700" fill="#1E6B33">Flyway — versiona o schema a cada deploy</text>
+  <text x="178" y="766" font-size="11" fill="#1E6B33">ddl-auto=validate: Hibernate nunca altera tabelas em runtime</text>
+
+  <!-- Provisioning / deploy arrows from Azure CLI into the RG -->
+  <line x1="1442" y1="326" x2="1442" y2="410" stroke="#0078D4" stroke-width="2.5" stroke-dasharray="3,3" marker-end="url(#arrowBlue)"/>
+  <text x="1448" y="345" font-size="11" font-weight="700" fill="#0078D4">01–02: az group /</text>
+  <text x="1448" y="359" font-size="11" font-weight="700" fill="#0078D4">postgres / webapp</text>
+  <text x="1448" y="373" font-size="11" font-weight="700" fill="#0078D4">create</text>
+
+  <line x1="1355" y1="293" x2="670" y2="293" stroke="#0078D4" stroke-width="2.5" stroke-dasharray="0"/>
+  <line x1="670" y1="293" x2="410" y2="293" stroke="#0078D4" stroke-width="0"/>
+  <path d="M1160,293 C 900,293 700,360 660,516" fill="none" stroke="#0078D4" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+  <text x="900" y="425" font-size="12" font-weight="700" fill="#0078D4">03: az webapp deploy --type jar (JAR do Maven, sem Docker)</text>
+
+  <!-- Legend -->
+  <g>
+    <rect x="1180" y="820" width="340" height="110" rx="8" fill="#FFFFFF" stroke="#C8C8C8" stroke-width="1"/>
+    <text x="1198" y="842" font-size="12.5" font-weight="700" fill="#1B1B1B">Legenda</text>
+    <line x1="1198" y1="858" x2="1228" y2="858" stroke="#0078D4" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+    <text x="1236" y="862" font-size="11" fill="#4B4B4B">Requisição HTTPS / JDBC+SSL em runtime</text>
+    <line x1="1198" y1="878" x2="1228" y2="878" stroke="#0078D4" stroke-width="2.5" stroke-dasharray="3,3" marker-end="url(#arrowBlue)"/>
+    <text x="1236" y="882" font-size="11" fill="#4B4B4B">Provisionamento / deploy via Azure CLI</text>
+    <line x1="1198" y1="898" x2="1228" y2="898" stroke="#5C5C5C" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="1236" y="902" font-size="11" fill="#4B4B4B">Fluxo de código (git / CLI local)</text>
+    <rect x="1198" y="910" width="16" height="12" fill="none" stroke="#5C5C5C" stroke-width="1.2" stroke-dasharray="4,3"/>
+    <text x="1236" y="921" font-size="11" fill="#4B4B4B">Limite lógico (Azure / Resource Group)</text>
+  </g>
+
+  <text x="60" y="1010" font-size="11.5" fill="#6B6B6B">Pet Family API — Sprint 3 DevOps Tools &amp; Cloud Computing · FIAP · Arquitetura: App Service + PostgreSQL Flexible Server (sem containers)</text>
+</svg>

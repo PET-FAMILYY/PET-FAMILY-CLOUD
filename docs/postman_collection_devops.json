@@ -1,0 +1,267 @@
+{
+  "info": {
+    "name": "Pet Family API — DevOps Sprint 3 (Azure)",
+    "description": "Roteiro de demonstração dos CRUDs de Pets e Consultas contra o deploy na Azure (App Service + PostgreSQL). Login/IDs são capturados automaticamente pelos scripts de teste de cada request — só rode na ordem, de cima para baixo.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://SEU-APP-SERVICE.azurewebsites.net", "type": "string" },
+    { "key": "demoPassword", "value": "TROQUE-ANTES-DE-RODAR", "type": "string" },
+    { "key": "vetSeedPassword", "value": "TROQUE-PELA-SENHA-USADA-NO-SEED", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "vetToken", "value": "", "type": "string" },
+    { "key": "petId1", "value": "", "type": "string" },
+    { "key": "petId2", "value": "", "type": "string" },
+    { "key": "consultaId1", "value": "", "type": "string" },
+    { "key": "consultaId2", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Autenticação",
+      "item": [
+        {
+          "name": "1.1 Registrar Tutor (demo)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Cadastro criado (201)', () => pm.response.to.have.status(201));",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('token', body.token);",
+                  "console.log('Tutor autenticado, tutorId=' + body.tutorId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/registrar", "host": ["{{baseUrl}}"], "path": ["auth", "registrar"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Tutor DevOps Demo\",\n  \"email\": \"{{$randomEmail}}\",\n  \"senha\": \"{{demoPassword}}\",\n  \"telefone\": \"(11) 90000-0000\"\n}"
+            }
+          }
+        },
+        {
+          "name": "1.2 Login Veterinário (seed Azure)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Login OK (200)', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('vetToken', body.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"veterinario.devops@petfamily.com\",\n  \"senha\": \"{{vetSeedPassword}}\"\n}"
+            },
+            "description": "Conta criada uma única vez em produção via azure/seed-veterinario.sql (o DataInitializer com dados de demo só roda no perfil 'dev'). Necessária porque excluir/realizar consulta é restrito a VETERINARIO. {{vetSeedPassword}} precisa ser EXATAMENTE a senha passada em VET_SEED_PASSWORD ao rodar o seed — nenhuma senha real fica fixa neste arquivo nem no seed."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Pets (CRUD 1)",
+      "item": [
+        {
+          "name": "2.1 Criar Pet 1 — Thor",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Pet criado (201)', () => pm.response.to.have.status(201));",
+            "pm.collectionVariables.set('petId1', pm.response.json().id);"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/pets", "host": ["{{baseUrl}}"], "path": ["pets"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Thor\",\n  \"especie\": \"Cachorro\",\n  \"raca\": \"Golden Retriever\",\n  \"idade\": 3,\n  \"peso\": 28.5,\n  \"observacoesSaude\": \"Alergia a ração com frango.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "2.2 Criar Pet 2 — Luna",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Pet criado (201)', () => pm.response.to.have.status(201));",
+            "pm.collectionVariables.set('petId2', pm.response.json().id);"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/pets", "host": ["{{baseUrl}}"], "path": ["pets"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Luna\",\n  \"especie\": \"Gato\",\n  \"raca\": \"Siamês\",\n  \"idade\": 2,\n  \"peso\": 3.8,\n  \"observacoesSaude\": \"Castrada. Muito ativa.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "2.3 Listar Pets",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('200 OK', () => pm.response.to.have.status(200));"
+          ] } }],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/pets", "host": ["{{baseUrl}}"], "path": ["pets"] }
+          }
+        },
+        {
+          "name": "2.4 Consultar Pet 1 por ID",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('200 OK', () => pm.response.to.have.status(200));"
+          ] } }],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/pets/{{petId1}}", "host": ["{{baseUrl}}"], "path": ["pets", "{{petId1}}"] }
+          }
+        },
+        {
+          "name": "2.5 Atualizar Pet 1",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Peso atualizado', () => pm.response.json().peso === 29.0);"
+          ] } }],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/pets/{{petId1}}", "host": ["{{baseUrl}}"], "path": ["pets", "{{petId1}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Thor\",\n  \"especie\": \"Cachorro\",\n  \"raca\": \"Golden Retriever\",\n  \"idade\": 3,\n  \"peso\": 29.0,\n  \"observacoesSaude\": \"Alergia a ração com frango. Prefere ração de cordeiro.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "2.6 Excluir Pet 2 (Luna)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('204 No Content', () => pm.response.to.have.status(204));"
+          ] } }],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/pets/{{petId2}}", "host": ["{{baseUrl}}"], "path": ["pets", "{{petId2}}"] },
+            "description": "Exclui o Pet 2 (sem consultas associadas). O Pet 1 é mantido porque as consultas da próxima seção dependem dele."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Consultas (CRUD 2)",
+      "item": [
+        {
+          "name": "3.1 Criar Consulta 1 (Pet 1) — agendar",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Consulta criada (201)', () => pm.response.to.have.status(201));",
+            "pm.collectionVariables.set('consultaId1', pm.response.json().id);"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/consultas/agendar", "host": ["{{baseUrl}}"], "path": ["consultas", "agendar"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"petId\": {{petId1}},\n  \"tipoConsulta\": \"Vacinação\",\n  \"data\": \"2030-06-15\",\n  \"horario\": \"10:00\",\n  \"observacoes\": \"Vacina V10 anual\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3.2 Criar Consulta 2 (Pet 1) — agendar",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Consulta criada (201)', () => pm.response.to.have.status(201));",
+            "pm.collectionVariables.set('consultaId2', pm.response.json().id);"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/consultas/agendar", "host": ["{{baseUrl}}"], "path": ["consultas", "agendar"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"petId\": {{petId1}},\n  \"tipoConsulta\": \"Check-up\",\n  \"data\": \"2030-07-01\",\n  \"horario\": \"14:30\",\n  \"observacoes\": \"Retorno de rotina\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3.3 Listar Consultas",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('200 OK', () => pm.response.to.have.status(200));"
+          ] } }],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/consultas", "host": ["{{baseUrl}}"], "path": ["consultas"] }
+          }
+        },
+        {
+          "name": "3.4 Consultar Consulta 1 por ID",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('200 OK', () => pm.response.to.have.status(200));"
+          ] } }],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/consultas/{{consultaId1}}", "host": ["{{baseUrl}}"], "path": ["consultas", "{{consultaId1}}"] }
+          }
+        },
+        {
+          "name": "3.5 Atualizar Consulta 1",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Horário atualizado', () => pm.response.json().horario === '11:00:00');"
+          ] } }],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/consultas/{{consultaId1}}", "host": ["{{baseUrl}}"], "path": ["consultas", "{{consultaId1}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoConsulta\": \"Vacinação\",\n  \"data\": \"2030-06-15\",\n  \"horario\": \"11:00\",\n  \"observacoes\": \"Vacina V10 anual — horário remarcado\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3.6 Excluir Consulta 2 (veterinário)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('204 No Content', () => pm.response.to.have.status(204));"
+          ] } }],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{vetToken}}" }],
+            "url": { "raw": "{{baseUrl}}/consultas/{{consultaId2}}", "host": ["{{baseUrl}}"], "path": ["consultas", "{{consultaId2}}"] },
+            "description": "Exclusão de consulta é restrita a VETERINARIO — por isso usa {{vetToken}} (da conta seed criada por azure/seed-veterinario.sql), não {{token}}."
+          }
+        }
+      ]
+    }
+  ]
+}

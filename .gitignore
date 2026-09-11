@@ -1,0 +1,27 @@
+# Maven / Spring Boot
+target/
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Banco H2
+*.db
+*.mv.db
+data/
+
+# Azure — segredos e variáveis locais (nunca commitar)
+azure/variables.sh
+azure/variables.local.sh
+.env
+.env.*
+*.pem
+
+# Diagrama/PDF — artefatos de build local, mantidos fora do git
+docs/*.pdf.tmp
