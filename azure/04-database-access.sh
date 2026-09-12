@@ -1,18 +1,6 @@
 #!/usr/bin/env bash
-# ============================================================
-# Pet Family API — 04: acesso ao PostgreSQL da Azure via psql
-# ============================================================
-# Garante que o IP atual está liberado no firewall do servidor e
-# abre uma sessão psql interativa (ou roda um arquivo .sql se
-# passado como argumento). Nenhuma senha é impressa no terminal.
-#
-# Uso:
-#   ./azure/04-database-access.sh                     # sessão interativa
-#   ./azure/04-database-access.sh azure/verify-database.sql  # roda um arquivo
-# ============================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib-common.sh"
 
 load_variables

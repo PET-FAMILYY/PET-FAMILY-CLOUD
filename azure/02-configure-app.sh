@@ -1,16 +1,6 @@
 #!/usr/bin/env bash
-# ============================================================
-# Pet Family API — 02: configuração do App Service
-# ============================================================
-# Configura, via Azure CLI, tudo que a aplicação precisa para
-# subir no perfil "prod": variáveis de ambiente (datasource,
-# JWT, CORS), SSL obrigatório na URL JDBC e health check.
-#
-# Pré-requisito: azure/01-create-infrastructure.sh já executado.
-# ============================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib-common.sh"
 
 load_variables

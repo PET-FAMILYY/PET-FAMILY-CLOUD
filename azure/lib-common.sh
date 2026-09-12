@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# ============================================================
-# Funções compartilhadas pelos scripts azure/*.sh — carregada com
-# "source" no início de cada script. Não é executada sozinha.
-# ============================================================
 set -euo pipefail
 
 SCRIPT_DIR_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,8 +7,6 @@ log()   { echo -e "\033[1;34m[petfamily]\033[0m $*"; }
 warn()  { echo -e "\033[1;33m[petfamily][atenção]\033[0m $*"; }
 fail()  { echo -e "\033[1;31m[petfamily][erro]\033[0m $*" >&2; exit 1; }
 
-# Carrega azure/variables.sh (não versionado). Se não existir,
-# encerra com instrução clara — nunca segue com valores vazios.
 load_variables() {
     local vars_file="${SCRIPT_DIR_LIB}/variables.sh"
     if [ ! -f "$vars_file" ]; then
@@ -20,12 +14,9 @@ load_variables() {
     cp azure/variables.example.sh azure/variables.sh
   e preencha os valores antes de continuar."
     fi
-    # shellcheck disable=SC1090
     source "$vars_file"
 }
 
-# require_env NOME1 NOME2 ... — encerra com mensagem clara se
-# alguma variável obrigatória estiver ausente/vazia.
 require_env() {
     local missing=()
     for name in "$@"; do
@@ -39,8 +30,6 @@ require_env() {
     fi
 }
 
-# Pede uma senha sem ecoar no terminal, se a variável ainda não
-# estiver definida no ambiente.
 prompt_secret_if_missing() {
     local var_name="$1"
     local prompt_text="$2"
@@ -51,9 +40,6 @@ prompt_secret_if_missing() {
     fi
 }
 
-# confirm "mensagem" — pede confirmação explícita antes de ações
-# destrutivas ou que geram custo. Só prossegue se o usuário digitar
-# exatamente a palavra pedida.
 confirm() {
     local message="$1"
     local word="${2:-CONFIRMAR}"

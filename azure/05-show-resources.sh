@@ -1,14 +1,6 @@
 #!/usr/bin/env bash
-# ============================================================
-# Pet Family API — 05: mostrar recursos criados na Azure
-# ============================================================
-# Lista Resource Group, App Service Plan, App Service e servidor
-# PostgreSQL, com URL pública e status — útil para a gravação do
-# vídeo (evidenciar que os recursos existem na Azure).
-# ============================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib-common.sh"
 
 load_variables

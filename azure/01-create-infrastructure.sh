@@ -1,22 +1,6 @@
 #!/usr/bin/env bash
-# ============================================================
-# Pet Family API — 01: criação da infraestrutura Azure
-# ============================================================
-# Cria, exclusivamente via Azure CLI (Opção 2 — sem containers):
-#   - Resource Group
-#   - Azure Database for PostgreSQL Flexible Server + banco da app
-#   - Regra de firewall (Azure services + IP público atual)
-#   - App Service Plan (Linux)
-#   - App Service (runtime Java, sem container)
-#
-# Uso:
-#   cp azure/variables.example.sh azure/variables.sh   # se ainda não fez
-#   # edite azure/variables.sh com nomes únicos do seu grupo
-#   ./azure/01-create-infrastructure.sh
-# ============================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib-common.sh"
 
 load_variables
@@ -30,8 +14,6 @@ prompt_secret_if_missing POSTGRES_ADMIN_PASSWORD \
     "Senha do administrador do PostgreSQL (mín. 8 caracteres, maiúscula+número+símbolo)"
 require_env POSTGRES_ADMIN_PASSWORD
 
-# --- Runtime Java: consulta os runtimes Linux disponíveis na
-#     assinatura/região em vez de supor um valor fixo. -----------
 log "Consultando runtimes Linux disponíveis no App Service..."
 AVAILABLE_JAVA_RUNTIME="$(az webapp list-runtimes --os-type linux -o tsv 2>/dev/null \
     | grep -E '^JAVA:17-' | head -n1 || true)"
@@ -90,11 +72,6 @@ az postgres flexible-server create \
     --public-access 0.0.0.0 \
     --yes \
     --output none
-# "--public-access 0.0.0.0" é um valor especial do Azure CLI: habilita
-# acesso público e já cria a regra "AllowAllAzureServicesAndResourcesWithinAzureIps"
-# (necessária para o App Service alcançar o banco). Nenhum IP pessoal
-# fica liberado por esse comando — o IP do cliente atual é tratado
-# à parte, logo abaixo, com detecção dinâmica (nunca hardcoded).
 
 log "Criando banco de dados da aplicação ($POSTGRES_DB_NAME)..."
 az postgres flexible-server db create \

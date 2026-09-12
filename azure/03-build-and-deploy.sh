@@ -1,17 +1,7 @@
 #!/usr/bin/env bash
-# ============================================================
-# Pet Family API — 03: build e deploy do JAR no App Service
-# ============================================================
-# 1. Verifica pré-requisitos (Java, Maven/Maven Wrapper, Azure CLI)
-# 2. Roda os testes automatizados
-# 3. Gera o JAR (Maven Wrapper se existir, senão Maven)
-# 4. Publica o JAR diretamente no App Service (sem Docker)
-# 5. Mostra a URL pública e consulta o health check
-# ============================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
-# shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib-common.sh"
 
 load_variables
@@ -39,7 +29,6 @@ log "Gerando o JAR (mvn package)..."
 "$MAVEN_CMD" -q package -DskipTests
 
 if [ ! -f "$JAR_RELATIVE_PATH" ]; then
-    # fallback: pega o primeiro jar executável em target/ que não seja *-sources/-javadoc
     FOUND_JAR="$(find target -maxdepth 1 -name "*.jar" ! -name "*sources*" ! -name "*javadoc*" | head -n1)"
     if [ -z "$FOUND_JAR" ]; then
         fail "JAR não encontrado em '$JAR_RELATIVE_PATH' nem em target/. Confira o build."

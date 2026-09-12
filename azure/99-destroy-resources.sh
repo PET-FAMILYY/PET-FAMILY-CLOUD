@@ -1,14 +1,6 @@
 #!/usr/bin/env bash
-# ============================================================
-# Pet Family API — 99: destruição dos recursos Azure
-# ============================================================
-# Remove o Resource Group inteiro (App Service, Plan e servidor
-# PostgreSQL) para não deixar custo residual. Ação IRREVERSÍVEL —
-# pede confirmação explícita, nunca roda "na cara".
-# ============================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck disable=SC1091
 source "${SCRIPT_DIR}/lib-common.sh"
 
 load_variables
