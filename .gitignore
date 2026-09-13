@@ -16,9 +16,7 @@ target/
 *.mv.db
 data/
 
-# Azure — segredos (nunca commitar). azure/variables.sh é versionado de
-# propósito nesta entrega (só nomes de recursos, sem nenhuma senha).
-azure/variables.local.sh
+
 .env
 .env.*
 *.pem
