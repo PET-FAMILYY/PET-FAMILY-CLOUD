@@ -80,6 +80,14 @@ az postgres flexible-server db create \
     --database-name "$POSTGRES_DB_NAME" \
     --output none
 
+log "Liberando a extensão pgcrypto (usada pelo seed do veterinário demo)..."
+az postgres flexible-server parameter set \
+    --resource-group "$AZURE_RESOURCE_GROUP" \
+    --server-name "$POSTGRES_SERVER_NAME" \
+    --name azure.extensions \
+    --value pgcrypto \
+    --output none
+
 if [ -n "$MY_IP" ]; then
     log "Liberando o IP público atual ($MY_IP) para acesso via psql..."
     az postgres flexible-server firewall-rule create \

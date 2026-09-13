@@ -36,10 +36,11 @@ az webapp config appsettings set \
     --output none >/dev/null
 
 log "Configurando health check (endpoint público /actuator/health)..."
-az webapp config set \
+MSYS_NO_PATHCONV=1 az resource update \
     --resource-group "$AZURE_RESOURCE_GROUP" \
     --name "$APP_SERVICE_NAME" \
-    --health-check-path "/actuator/health" \
+    --resource-type Microsoft.Web/sites \
+    --set properties.siteConfig.healthCheckPath=/actuator/health \
     --output none
 
 log "Habilitando HTTPS-only e always-on..."

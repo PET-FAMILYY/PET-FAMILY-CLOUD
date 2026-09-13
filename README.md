@@ -99,9 +99,8 @@ O schema é 100% gerenciado pelo Flyway (`src/main/resources/db/migration`). O H
 
 | Migration | Conteúdo |
 |---|---|
-| `V1__schema_inicial.sql` | Tabelas base: tutores, pets, consultas, lembretes, interacoes_ia (equivalente ao schema das entregas 1–2). |
+| `V1__schema_inicial.sql` | Tabelas base: tutores, pets, consultas, lembretes, interacoes_ia (equivalente ao schema das entregas 1–2). `pets.peso` usa `DOUBLE PRECISION` (padrão SQL, compatível com H2 e PostgreSQL). |
 | `V2__autenticacao_e_fluxos.sql` | Tabela `usuarios` (autenticação), tabela `consulta_slots` (modelo de disponibilidade) e colunas novas em `lembretes` para o fluxo de cuidado preventivo (recorrência, conclusão, responsáveis). |
-| `V3__compatibilidade_postgresql.sql` | Ajuste de compatibilidade com PostgreSQL: `pets.peso` passa de `DOUBLE` (sinônimo específico do H2) para `DOUBLE PRECISION` (padrão SQL, também válido no H2) — necessário para o deploy no Azure Database for PostgreSQL. |
 
 **Como criar uma nova migration:** adicione um arquivo `V3__descricao_curta.sql` em `src/main/resources/db/migration` (numeração sempre crescente) e rode a aplicação — o Flyway aplica automaticamente na subida. **Nunca edite uma migration já aplicada**; toda mudança de schema vira uma migration nova.
 
@@ -117,6 +116,12 @@ Em qualquer perfil, `spring.jpa.hibernate.ddl-auto=validate` — o Hibernate **n
 cria/altera tabelas em runtime; só o Flyway evolui o schema. Ver seção
 [Sprint 3 — DevOps Tools & Cloud Computing](#sprint-3--devops-tools--cloud-computing-azure)
 para o passo a passo completo do deploy em PostgreSQL/Azure.
+
+> **Nota:** o H2 dos perfis `dev`/`test` existe só para desenvolvimento local e para os
+> testes automatizados (`mvn test`) rodarem isolados e rápidos, sem depender de rede —
+> prática padrão de mercado. **A aplicação publicada na Azure (perfil `prod`) usa
+> exclusivamente PostgreSQL — nunca H2.** O requisito "banco de dados em nuvem" desta
+> entrega é atendido 100% pelo Azure Database for PostgreSQL Flexible Server.
 
 ### Dados de demonstração
 
@@ -571,7 +576,7 @@ autenticação, Flyway e arquitetura já existentes.
 - `application-prod.properties` **(novo)** — PostgreSQL via `SPRING_DATASOURCE_URL/USERNAME/PASSWORD` (sempre variável de ambiente, SSL obrigatório na URL), `ddl-auto=validate`, porta `${PORT:8080}`.
 
 **Banco / Flyway**
-- `db/migration/V3__compatibilidade_postgresql.sql` **(nova)** — corrige `pets.peso` de `DOUBLE` (H2) para `DOUBLE PRECISION` (padrão SQL/PostgreSQL). V1 e V2 não foram tocadas.
+- `db/migration/V1__schema_inicial.sql` — `pets.peso` ajustado de `DOUBLE` (sinônimo específico do H2) para `DOUBLE PRECISION` (padrão SQL, necessário para rodar em PostgreSQL). Esse ajuste foi feito direto na V1 porque a migration nunca havia sido aplicada com sucesso em nenhum ambiente real até então.
 - `pom.xml` — dependência `org.postgresql:postgresql` (runtime) adicionada; `com.h2database:h2` mantida para dev/test.
 - `script_bd.sql` **(novo, raiz do repositório)** — DDL de documentação do schema PostgreSQL, com `COMMENT ON TABLE/COLUMN`.
 

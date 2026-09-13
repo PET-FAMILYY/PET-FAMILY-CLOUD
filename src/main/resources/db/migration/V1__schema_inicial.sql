@@ -12,7 +12,7 @@ CREATE TABLE pets (
     especie             VARCHAR(100) NOT NULL,
     raca                VARCHAR(100),
     idade               INTEGER,
-    peso                DOUBLE,
+    peso                DOUBLE PRECISION,
     observacoes_saude   TEXT,
     tutor_id            BIGINT NOT NULL,
     CONSTRAINT fk_pets_tutor FOREIGN KEY (tutor_id) REFERENCES tutores (id)

@@ -44,8 +44,8 @@ if [ "$#" -ge 1 ]; then
     fi
 
     log "Executando '$SQL_FILE' contra $POSTGRES_DB_NAME em $HOST..."
-    psql "host=$HOST port=5432 dbname=$POSTGRES_DB_NAME user=$POSTGRES_ADMIN_USER sslmode=require" \
-        "${PSQL_VARS[@]}" -f "$SQL_FILE"
+    psql "${PSQL_VARS[@]}" -f "$SQL_FILE" \
+        "host=$HOST port=5432 dbname=$POSTGRES_DB_NAME user=$POSTGRES_ADMIN_USER sslmode=require"
 else
     log "Abrindo sessão psql interativa em $POSTGRES_DB_NAME @ $HOST (SSL obrigatório)..."
     psql "host=$HOST port=5432 dbname=$POSTGRES_DB_NAME user=$POSTGRES_ADMIN_USER sslmode=require"
