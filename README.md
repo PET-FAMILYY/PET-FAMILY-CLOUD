@@ -395,9 +395,10 @@ az login
 # 4. Selecionar a assinatura correta
 az account set --subscription "<nome-ou-id-da-assinatura>"
 
-# 5. Configurar variáveis locais (nunca commitadas)
-cp azure/variables.example.sh azure/variables.sh
-# edite azure/variables.sh: nomes únicos do grupo (ex.: sufixo com seu RM)
+# 5. Variáveis já vêm prontas em azure/variables.sh (nomes desta entrega,
+#    sem nenhuma senha). Se for reaproveitar o projeto com outro grupo/RM,
+#    copie azure/variables.example.sh para azure/variables.sh e ajuste os
+#    nomes (evita conflito de nome global no Azure).
 
 # 6. Criar a infraestrutura (Resource Group, PostgreSQL, App Service Plan, App Service)
 ./azure/01-create-infrastructure.sh
@@ -471,14 +472,15 @@ foi realmente persistida — nunca mock, lista em memória ou resposta fixa.
   variáveis de ambiente do App Service (`az webapp config appsettings set`,
   executado por `azure/02-configure-app.sh`) — nunca aparecem no código, no README
   ou nos logs dos scripts.
-- `azure/variables.sh` (valores reais) está no `.gitignore`; só
-  `azure/variables.example.sh` (placeholders) é versionado.
+- `azure/variables.sh` é versionado nesta entrega, mas só contém **nomes de
+  recursos** (Resource Group, App Service, servidor PostgreSQL, SKUs) — nenhuma
+  senha, token ou segredo fica nele; `POSTGRES_ADMIN_PASSWORD`, `VET_SEED_PASSWORD`
+  e `JWT_SECRET` são sempre digitados na hora (prompt seguro) ou gerados em runtime.
 - Conexão do App Service com o PostgreSQL sempre com `sslmode=require`.
 - Autenticação da API continua por JWT (Bearer) — nenhuma rota de negócio fica
   pública em produção; só `/auth/login`, `/auth/registrar`, Swagger e
   `/actuator/health`.
-- `.gitignore` cobre `azure/variables.sh`, `.env*`, `*.pem` e o diretório `data/`
-  do H2 local.
+- `.gitignore` cobre `.env*`, `*.pem` e o diretório `data/` do H2 local.
 
 ### Solução de problemas
 
@@ -490,7 +492,7 @@ foi realmente persistida — nunca mock, lista em memória ou resposta fixa.
 | Aplicação não conecta no PostgreSQL / timeout | Firewall do servidor sem a regra do App Service ou do seu IP — rode `az postgres flexible-server firewall-rule list` e confira, ou rode `azure/04-database-access.sh` de novo (ele atualiza a regra do IP atual). |
 | `SPRING_DATASOURCE_*` inválido / app não sobe no App Service | Confira `az webapp config appsettings list` — os 3 valores (`SPRING_DATASOURCE_URL/USERNAME/PASSWORD`) precisam bater com o servidor/banco criados em `01-create-infrastructure.sh`. |
 | App Service não inicia / erro 503 | Rode `az webapp log tail --resource-group <rg> --name <app-service>` durante o boot; causa comum é migration do Flyway falhando ou variável de ambiente ausente. |
-| Migration do Flyway falha no Postgres | Confira se não sobrou SQL específico do H2; a V3 já corrige o único caso conhecido (`peso DOUBLE` → `DOUBLE PRECISION`). Nunca edite V1/V2 — crie uma V4 se precisar de mais ajustes. |
+| Migration do Flyway falha no Postgres | Confira se não sobrou SQL específico do H2 (V1 já usa `DOUBLE PRECISION`, compatível com H2 e Postgres). Nunca edite uma migration já aplicada com sucesso — crie uma nova versionada. Se uma migration ficou registrada como falha e trava o próximo deploy, rode `./azure/04-database-access.sh azure/reset-database.sql` (apaga e recria o schema `public` — só use se não houver dado real a perder) e implante de novo. |
 | Versão errada do Java no build | O projeto usa Java 17 (`pom.xml`); confira `java -version` e `JAVA_HOME`. O App Service usa o runtime `JAVA:17-java17` (Linux), confirmado via `az webapp list-runtimes --os-type linux`. |
 | App mobile usando URL `localhost`/H2 local em vez do deploy | Troque a URL base do app Expo para `https://<app-service>.azurewebsites.net` (nunca `localhost`) ao testar contra o ambiente Azure. |
 | Preciso ver logs do App Service | `az webapp log tail --resource-group <rg> --name <app-service>` (tempo real) ou `az webapp log download --resource-group <rg> --name <app-service> --log-file log.zip` (arquivo). |
@@ -595,7 +597,7 @@ autenticação, Flyway e arquitetura já existentes.
 
 **Infraestrutura como código (novo diretório `azure/`)**
 - `lib-common.sh` — validação de variáveis obrigatórias, prompt seguro de senha, confirmação explícita antes de ações pagas/destrutivas.
-- `variables.example.sh` — placeholders seguros (nenhum segredo); `variables.sh` real fica fora do git.
+- `variables.example.sh` — placeholders seguros para quem for reaproveitar o projeto; `variables.sh` desta entrega é versionado (só nomes de recursos, sem segredo).
 - `01-create-infrastructure.sh` — Resource Group, PostgreSQL Flexible Server + banco, firewall (Azure services + IP dinâmico do cliente), App Service Plan (Linux), App Service (runtime Java consultado via `az webapp list-runtimes`).
 - `02-configure-app.sh` — variáveis de ambiente do App Service (datasource com SSL, JWT, CORS), health check, HTTPS-only.
 - `03-build-and-deploy.sh` — pré-requisitos, testes, build (`mvnw`/`mvn`), `az webapp deploy --type jar`, checagem de `/actuator/health`.
@@ -610,7 +612,7 @@ autenticação, Flyway e arquitetura já existentes.
 - `docs/postman_collection_devops.json` **(novo)** — roteiro de demonstração dos CRUDs de Pets e Consultas contra o deploy Azure, com captura automática de token/IDs.
 - `docs/entrega-integrantes.pdf` / `.md` / `gen_pdf_integrantes.py` **(novos)** — PDF obrigatório só com integrantes/RM + links.
 - `README.md` — seção "Sprint 3 — DevOps Tools & Cloud Computing (Azure)" adicionada (arquitetura, pré-requisitos, deploy completo, demonstração dos CRUDs, segurança, troubleshooting, evidências); tabelas de tecnologias/Flyway/endpoints atualizadas.
-- `.gitignore` — `azure/variables.sh`, `.env*`, `*.pem`, `data/`.
+- `.gitignore` — `.env*`, `*.pem`, `data/`.
 
 ---
 
@@ -636,7 +638,8 @@ PET--FAMILY-JAVA-main/
 ├── .gitignore
 ├── azure/                        (Sprint 3 — infraestrutura como código)
 │   ├── lib-common.sh
-│   ├── variables.example.sh      (variables.sh real fica fora do git)
+│   ├── variables.example.sh
+│   ├── variables.sh               (nomes desta entrega, sem senha)
 │   ├── 01-create-infrastructure.sh
 │   ├── 02-configure-app.sh
 │   ├── 03-build-and-deploy.sh
@@ -644,7 +647,8 @@ PET--FAMILY-JAVA-main/
 │   ├── 05-show-resources.sh
 │   ├── 99-destroy-resources.sh
 │   ├── verify-database.sql
-│   └── seed-veterinario.sql
+│   ├── seed-veterinario.sql
+│   └── reset-database.sql
 ├── docs/
 │   ├── arquitetura.md
 │   ├── arquitetura-azure.svg / .png   (Sprint 3 — diagrama de nuvem)
