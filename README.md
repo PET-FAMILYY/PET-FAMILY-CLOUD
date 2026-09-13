@@ -497,6 +497,11 @@ foi realmente persistida — nunca mock, lista em memória ou resposta fixa.
 | App mobile usando URL `localhost`/H2 local em vez do deploy | Troque a URL base do app Expo para `https://<app-service>.azurewebsites.net` (nunca `localhost`) ao testar contra o ambiente Azure. |
 | Preciso ver logs do App Service | `az webapp log tail --resource-group <rg> --name <app-service>` (tempo real) ou `az webapp log download --resource-group <rg> --name <app-service> --log-file log.zip` (arquivo). |
 
+### Evidências
+
+- **URL pública da API:** `https://petfamily-api-rm566551.azurewebsites.net`
+- **Link do repositório GitHub:** https://github.com/PET-FAMILYY/PET-FAMILY-CLOUD
+- **Link do vídeo no YouTube:** https://youtu.be/qz70Rx8wwx8
 
 ---
 

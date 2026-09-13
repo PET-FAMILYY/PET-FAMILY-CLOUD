@@ -19,9 +19,8 @@ INTEGRANTES = [
     "Felipe Kirschner Modesto - RM561810",
 ]
 
-# TODO: preencher antes de gerar o PDF final da entrega.
-GITHUB_LINK = "[PREENCHER - link do repositório GitHub da entrega]"
-YOUTUBE_LINK = "[PREENCHER - link do vídeo no YouTube]"
+GITHUB_LINK = "https://github.com/PET-FAMILYY/PET-FAMILY-CLOUD"
+YOUTUBE_LINK = "https://youtu.be/qz70Rx8wwx8"
 
 OUTPUT_PATH = "docs/entrega-integrantes.pdf"
 
@@ -42,15 +41,12 @@ def gerar_pdf() -> None:
     pdf.set_font("Helvetica", "B", 12)
     pdf.cell(0, 10, "Link do repositório GitHub", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.set_text_color(180, 0, 30)
     pdf.cell(0, 8, GITHUB_LINK, new_x="LMARGIN", new_y="NEXT")
-    pdf.set_text_color(0, 0, 0)
 
     pdf.ln(8)
     pdf.set_font("Helvetica", "B", 12)
     pdf.cell(0, 10, "Link do vídeo no YouTube", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.set_text_color(180, 0, 30)
     pdf.cell(0, 8, YOUTUBE_LINK, new_x="LMARGIN", new_y="NEXT")
 
     pdf.output(OUTPUT_PATH)

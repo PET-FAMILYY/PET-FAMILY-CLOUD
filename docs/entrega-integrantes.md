@@ -7,8 +7,8 @@
 
 # Link do repositório GitHub
 
-....
+https://github.com/PET-FAMILYY/PET-FAMILY-CLOUD
 
 # Link do vídeo no YouTube
 
-....
+https://youtu.be/qz70Rx8wwx8
